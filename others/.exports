@@ -1,0 +1,38 @@
+# Make vim the default editor.
+export EDITOR='nvim';
+
+# Enable persistent REPL history for `node`.
+NODE_REPL_HISTORY_FILE=~/.node_history;
+# Allow 32³ entries; the default is 1000.
+NODE_REPL_HISTORY_SIZE='32768';
+
+# Omit duplicates and commands that begin with a space from history.
+export HISTCONTROL='ignoreboth';
+
+# Prefer US English and use UTF-8.
+export LANG='en_US.UTF-8';
+export LC_ALL='en_US.UTF-8';
+
+# Highlight section titles in manual pages.
+export LESS_TERMCAP_md="${yellow}";
+
+# Don’t clear the screen after quitting a manual page.
+export MANPAGER='less -X';
+
+export GOPATH=$HOME/Documents/workspace/go
+
+export CARGOPATH=$HOME/.cargo
+
+export COCKROACH_SKIP_ENABLING_DIAGNOSTIC_REPORTING=true
+
+export POSTGRESQL_PATH=/opt/postgres/
+
+export NPM_PACKAGES=$HOME/.npm-packages
+
+export NODE_PATH=$NODE_PATH:$NPM_PACKAGES/lib/node_modules
+
+export GPG_TTY=$(tty)
+
+export DENO_INSTALL=$HOME/.deno
+
+export PATH=$HOME/.rbenv/bin:$PATH:bin:~/bin:$GOPATH/bin:$CARGOPATH/bin:/usr/local/bin:/usr/local/sbin:/usr/local/mysql/bin:/usr/local/git/bin:/usr/bin:/bin:/usr/sbin:/sbin:$POSTGRESQL_PATH/bin:$HOME/.mix/escripts:$NPM_PACKAGES/bin:$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$DENO_INSTALL/bin

@@ -1,0 +1,37 @@
+# Handle the fact that this file will be used with multiple OSs
+platform=`uname`
+
+alias u='cd ..'
+alias l='lsd -l'
+alias la='lsd -a'
+alias lla='lsd -la'
+alias lt='lsd --tree'
+alias src='cd ~/Documents/workspace/'
+alias gosrc='cd ~/Documents/workspace/go/src/'
+alias gd='git diff'
+alias gp='git push'
+alias gpr='git pull --rebase'
+alias gs='git status'
+alias killruby='killall -9 ruby'
+alias nf='neofetch'
+
+# Move export GREP_OPTIONS="--color=auto" (which is deprecated) from .exports to .alias
+# Always enable colored `grep` output`
+alias grep="grep --color=auto"
+alias fgrep="fgrep --color=auto"
+alias egrep="egrep --color=auto"
+
+# Using nvim for vim
+alias vim='nvim'
+
+# k8s
+alias k='kubectl'
+
+# RabbitMQ start server
+alias rabbit='/opt/rabbit/sbin/rabbitmq-server'
+
+# PostgreSQL
+alias psqldb='postgres -D /opt/postgres/data/'
+
+# CockroachDB
+alias crdb='/opt/cockroach/cockroach start-single-node --logtostderr=ERROR --insecure --listen-addr=localhost --store=type=mem,size=3GiB'
