@@ -1,140 +1,172 @@
-set runtimepath^=~/.vim runtimepath+=~/.vim/after
-let &packpath = &runtimepath
-source ~/.vimrc
+
+lua print('Neovim started...')
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => General settings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set mouse=a                 " Enable mouse
+set expandtab               " Tab setting 
+set tabstop=4               " Tab setting 
+set shiftwidth=4            " Tab setting
+set listchars=tab:\¦\       " Tab charactor 
+set list
+set foldmethod=syntax         
+set foldnestmax=1
+set foldlevelstart=3        "  
+set number                  " Show line number
+set ignorecase              " Enable case-sensitive 
+
+" Disable backup
+set nobackup
+set nowb
+set noswapfile
+
+" Optimize 
+set synmaxcol=3000    "Prevent breaking syntax hightlight when string too long. Max = 3000"
+set lazyredraw
+au! BufNewFile,BufRead *.json set foldmethod=indent " Change foldmethod for specific filetype
+
+syntax on
+
+" Enable copying from vim to clipboard
+if has('win32')
+  set clipboard=unnamed  
+else
+  set clipboard=unnamedplus
+endif
+
+" Auto reload content changed outside
+au CursorHold,CursorHoldI * checktime
+au FocusGained,BufEnter * :checktime
+autocmd FocusGained,BufEnter,CursorHold,CursorHoldI *
+    \ if mode() !~ '\v(c|r.?|!|t)' && getcmdwintype() == ''
+      \ | checktime 
+    \ | endif
+autocmd FileChangedShellPost *
+    \ echohl WarningMsg 
+    \ | echo "File changed on disk. Buffer reloaded."
+    \ | echohl None
 
 
-lua <<EOF
--- Set up nvim-cmp.
-local cmp = require'cmp'
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Key mappings
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" 
+" Resize pane
+nmap <M-Right> :vertical resize +1<CR>    
+nmap <M-Left> :vertical resize -1<CR>
+nmap <M-Down> :resize +1<CR>
+nmap <M-Up> :resize -1<CR>
 
-cmp.setup({
-  snippet = {
-    expand = function(args)
-      vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-    end,
-  },
-  window = {
-    -- completion = cmp.config.window.bordered(),
-    -- documentation = cmp.config.window.bordered(),
-  },
-  mapping = cmp.mapping.preset.insert({
-    ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-    ['<C-f>'] = cmp.mapping.scroll_docs(4),
-    ['<C-Space>'] = cmp.mapping.complete(),
-    ['<C-e>'] = cmp.mapping.abort(),
-    ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-  }),
-  sources = cmp.config.sources({
-    { name = 'nvim_lsp' },
-    { name = 'vsnip' }, -- For vsnip users.
-  }, {
-    { name = 'buffer' },
-  })
-})
+" Search a hightlighted text
+vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
+nmap /\ :noh<CR>
 
--- Set configuration for specific filetype.
-cmp.setup.filetype('gitcommit', {
-  sources = cmp.config.sources({
-    { name = 'git' }, -- You can specify the `git` source if [you were installed it](https://github.com/petertriho/cmp-git).
-  }, {
-    { name = 'buffer' },
-  })
-})
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Plugin list
+" (used with Vim-plug - https://github.com/junegunn/vim-plug)
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+call plug#begin(stdpath('config').'/plugged')
+" Theme
+  Plug 'joshdick/onedark.vim',                  " Dark theme
+  Plug 'akinsho/bufferline.nvim', { 'tag': '*' }
 
--- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
-cmp.setup.cmdline({ '/', '?' }, {
-  mapping = cmp.mapping.preset.cmdline(),
-  sources = {
-    { name = 'buffer' }
+" File browser
+  Plug 'preservim/nerdTree'                     " File browser  
+  Plug 'Xuyuanp/nerdtree-git-plugin'            " Git status
+  Plug 'ryanoasis/vim-devicons'                 " Icon
+  Plug 'unkiwii/vim-nerdtree-sync'              " Sync current file 
+  Plug 'jcharum/vim-nerdtree-syntax-highlight',
+    \ {'branch': 'escape-keys'}
+
+" File search
+  Plug 'junegunn/fzf', 
+    \ { 'do': { -> fzf#install() } }            " Fuzzy finder 
+  Plug 'junegunn/fzf.vim'
+
+" Status bar
+  Plug 'vim-airline/vim-airline'
+  Plug 'vim-airline/vim-airline-themes'
+
+" Terminal
+  Plug 'voldikss/vim-floaterm'                  " Float terminal
+
+" Code intellisense
+  Plug 'neoclide/coc.nvim', 
+    \ {'branch': 'release'}                     " Language server protocol (LSP) 
+  Plug 'jiangmiao/auto-pairs'                   " Parenthesis auto 
+  Plug 'mattn/emmet-vim' 
+  Plug 'preservim/nerdcommenter'                " Comment code 
+  " Plug 'liuchengxu/vista.vim'                   " Function tag bar
+  Plug 'alvan/vim-closetag'                     " Auto close HTML/XML tag 
+    \ { 
+      \ 'do': 'yarn install '
+              \ .'--frozen-lockfile '
+              \ .'&& yarn build',
+      \ 'branch': 'main' 
+    \ }
+
+" Code syntax highlight
+  " Plug 'yuezk/vim-js'                           " Javascript
+  " Plug 'MaxMEllon/vim-jsx-pretty'               " JSX/React
+  " Plug 'jackguo380/vim-lsp-cxx-highlight'       " C/C++
+  " Plug 'uiiaoo/java-syntax.vim'                 " Java
+  Plug 'sheerun/vim-polyglot'
+  
+" Debugging
+  Plug 'puremourning/vimspector'                " Vimspector
+
+" Source code version control 
+  Plug 'tpope/vim-fugitive'                     " Git infomation 
+  Plug 'tpope/vim-rhubarb' 
+  Plug 'airblade/vim-gitgutter'                 " Git show changes 
+  Plug 'samoshkin/vim-mergetool'                " Git merge
+
+" Fold 
+  Plug 'tmhedberg/SimpylFold'
+call plug#end()
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Plugin Setting
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Set theme 
+colorscheme onedark
+
+set termguicolors
+autocmd VimEnter * call s:setup_lualine()
+function! s:setup_lualine() abort
+lua<<EOF
+require("bufferline").setup{
+  options = {
+    indicator = {
+      style = 'none',
+    },
+    diagnostics = "coc",
   }
-})
-
--- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
-cmp.setup.cmdline(':', {
-  mapping = cmp.mapping.preset.cmdline(),
-  sources = cmp.config.sources({
-    { name = 'path' }
-  }, {
-    { name = 'cmdline' }
-  })
-})
-
--- Set up lspconfig.
-require("mason").setup()
-require("mason-lspconfig").setup()
-local lspconfig = require('lspconfig')
-local capabilities = require('cmp_nvim_lsp').default_capabilities()
-lspconfig.tsserver.setup{
-  capabilities = capabilities
 }
-lspconfig.tailwindcss.setup{
-  capabilities = capabilities
-}
-lspconfig.solargraph.setup{
-  settings = {
-    solargraph = {
-      commandPath = '/~/.rbenv/shims/solargraph'
-    }
-  },
-  capabilities = capabilities
-}
-lspconfig.gopls.setup{
-  capabilities = capabilities
-}
-lspconfig.elixirls.setup{
-  capabilities = capabilities
-}
-
--- Global mappings for lspconfig.
--- See `:help vim.diagnostic.*` for documentation on any of the below functions
-vim.keymap.set('n', '<space>e', vim.diagnostic.open_float)
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
-vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist)
-
--- Use LspAttach autocommand to only map the following keys
--- after the language server attaches to the current buffer
-vim.api.nvim_create_autocmd('LspAttach', {
-  group = vim.api.nvim_create_augroup('UserLspConfig', {}),
-  callback = function(ev)
-    -- Enable completion triggered by <c-x><c-o>
-    vim.bo[ev.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
-
-    -- Buffer local mappings.
-    -- See `:help vim.lsp.*` for documentation on any of the below functions
-    local opts = { buffer = ev.buf }
-    vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
-    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-    vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-    vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
-    vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
-    vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, opts)
-    vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, opts)
-    vim.keymap.set('n', '<space>wl', function()
-      print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-    end, opts)
-    vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, opts)
-    vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, opts)
-    vim.keymap.set({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, opts)
-    vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
-    vim.keymap.set('n', '<space>f', function()
-      vim.lsp.buf.format { async = true }
-    end, opts)
-  end,
-})
-
--- nvim-lint config.
-lint = require('lint')
-lint.linters_by_ft = {
-  typescriptreact = {'eslint_d',},
-  typescript = {'eslint_d',},
-  javascript = {'eslint_d',},
-  javascriptreact = {'eslint_d',},
-}
-vim.api.nvim_create_autocmd({ "BufWritePost" }, {
-  callback = function()
-    lint.try_lint()
-  end,
-})
-
 EOF
+endfunction
+
+" Overwrite some color highlight 
+if (has("autocmd"))
+  augroup colorextend
+    autocmd ColorScheme 
+      \ * call onedark#extend_highlight("Comment",{"fg": {"gui": "#728083"}})
+    autocmd ColorScheme 
+      \ * call onedark#extend_highlight("LineNr", {"fg": {"gui": "#728083"}})
+  augroup END
+endif
+
+" Disable automatic comment in newline
+autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+
+vnoremap <C-r> "hy:%s/<C-r>h//gc<left><left><left>
+
+" Close buffer without exitting vim 
+nnoremap <silent> <leader>bd :bp \| sp \| bn \| bd<CR>
+
+" Other setting
+for setting_file in split(glob(stdpath('config').'/settings/*.vim'))
+  execute 'source' setting_file
+endfor
+

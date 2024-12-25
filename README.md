@@ -5,7 +5,7 @@
 - Clone the repo to home directory
 
   ```console
-  git clone git@github.com:nuhoangcodon99/dotfiles.git ~/.dotfiles
+  git clone https://github.com/nuhoangcodon99/dotfiles.git ~/.dotfiles
   cd ~/.dotfiles
   ```
 

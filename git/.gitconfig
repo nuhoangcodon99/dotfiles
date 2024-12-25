@@ -1,7 +1,7 @@
 [user]
-	name = Luu Gia Thuy
-	email = luugiathuy@gmail.com
-	signingkey = EC8336D94FE26EA0
+	name = // you name
+	email = // you email 
+	signingkey = // you key
 
 [alias]
 	co = checkout
